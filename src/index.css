@@ -1,0 +1,85 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@layer base {
+  body {
+    @apply bg-neutral-50 text-neutral-950 antialiased font-sans transition-colors duration-200 dark:bg-neutral-950 dark:text-neutral-100;
+  }
+}
+
+/* Custom scrollbar for premium feel */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #262626;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #404040;
+}
+
+/* Monaco editor styles overriding */
+.monaco-editor {
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+
+/* Custom fade-in micro-animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Pull switch chain spring animation */
+@keyframes pullChain {
+  0% {
+    transform: translateY(0);
+  }
+  30% {
+    transform: translateY(14px);
+  }
+  60% {
+    transform: translateY(-3px);
+  }
+  85% {
+    transform: translateY(1px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+.animate-pull {
+  animation: pullChain 0.45s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* Decorative dot matrix grid */
+.bg-grid-pattern {
+  background-image: radial-gradient(rgba(120, 119, 198, 0.1) 1.5px, transparent 1.5px);
+  background-size: 24px 24px;
+}
+.dark .bg-grid-pattern {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.03) 1.5px, transparent 1.5px);
+  background-size: 24px 24px;
+}
+
+
