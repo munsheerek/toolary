@@ -19,9 +19,9 @@ export interface ToolDefinition {
 export const TOOLS_CONFIG: readonly ToolDefinition[] = [
   {
     id: 'json',
-    title: 'JSON Formatter',
-    sidebarLabel: 'JSON Formatter',
-    description: 'Format, validate and explore JSON trees. Highlight syntaxes and extract file metadata instantly.',
+    title: 'JSON Workspace',
+    sidebarLabel: 'JSON Workspace',
+    description: 'Format, validate, inspect and transform JSON data.',
     icon: FileJson,
     glowColor: 'from-violet-500/20 to-purple-500/20 dark:from-violet-500/10 dark:to-purple-500/10',
     hoverCardBorder: 'hover:border-violet-500/30 dark:hover:border-violet-500/25',
@@ -32,9 +32,9 @@ export const TOOLS_CONFIG: readonly ToolDefinition[] = [
   },
   {
     id: 'excel',
-    title: 'Excel Viewer',
-    sidebarLabel: 'Excel Viewer',
-    description: 'View, sort, filter, and analyze spreadsheet data locally. Convert CSV, XLS, and XLSX sheets easily.',
+    title: 'Excel Workspace',
+    sidebarLabel: 'Excel Workspace',
+    description: 'View, filter and convert spreadsheet files.',
     icon: Table,
     glowColor: 'from-blue-500/20 to-indigo-500/20 dark:from-blue-500/10 dark:to-indigo-500/10',
     hoverCardBorder: 'hover:border-blue-500/30 dark:hover:border-blue-500/25',

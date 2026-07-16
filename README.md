@@ -1,6 +1,6 @@
-# DevBox - Developer Utility Application
+# Toolary - Your everyday workspace for data and files.
 
-DevBox is a modern, privacy-first developer toolbox that compiles commonly used developer utilities into a single, clean workspace. All computation is run locally in the browser context; no file data, JSON code, or parsed tables are ever sent to a remote server. 
+Toolary is a privacy-first workspace application that brings together useful tools for developers, data professionals, and everyday users. All computation is run locally in the browser context; no file data, JSON code, or parsed tables are ever sent to a remote server. 
 
 **"Your data stays on your device."**
 
@@ -69,7 +69,7 @@ src/
 ### Installation
 1. Clone the repository or navigate to the directory:
    ```bash
-   cd /Users/munsheerek/Projects/devbox
+   cd /Users/munsheerek/Projects/hobby-projects/devbox
    ```
 2. Install dependencies:
    ```bash
@@ -100,7 +100,7 @@ src/
 ## Deployment Instructions
 
 ### Static Site Hosting (Recommended)
-Since DevBox is a client-side only SPA (Single Page Application) with no database backend, you can compile and host it on static web host platforms.
+Since Toolary is a client-side only SPA (Single Page Application) with no database backend, you can compile and host it on static web host platforms.
 
 1. Generate the static folder output by running:
    ```bash

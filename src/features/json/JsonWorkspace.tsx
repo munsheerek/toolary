@@ -13,7 +13,7 @@ import { useAppStore } from '../../store/useAppStore'
 import { useKeyboardShortcut } from '../../hooks/useKeyboardShortcuts'
 
 const SAMPLE_JSON = `{
-  "appName": "DevBox",
+  "appName": "Toolary",
   "version": "1.0.0",
   "status": "active",
   "privacyFirst": true,
@@ -29,7 +29,7 @@ const SAMPLE_JSON = `{
   ],
   "author": {
     "name": "Developer Utilities Team",
-    "contact": "support@devbox.local"
+    "contact": "support@toolary.local"
   }
 }`
 
@@ -101,7 +101,7 @@ export const JsonWorkspace: React.FC = () => {
       const url = URL.createObjectURL(blob)
       const a = document.createElement('a')
       a.href = url
-      a.download = `devbox-format-${Date.now()}.json`
+      a.download = `toolary-format-${Date.now()}.json`
       document.body.appendChild(a)
       a.click()
       document.body.removeChild(a)
@@ -173,7 +173,7 @@ export const JsonWorkspace: React.FC = () => {
       {/* Action Toolbar */}
       <div className="flex items-center justify-between border-b border-neutral-250 dark:border-neutral-850 pb-4">
         <div>
-          <h2 className="text-xl font-bold text-neutral-900 dark:text-white">JSON Formatter</h2>
+          <h2 className="text-xl font-bold text-neutral-900 dark:text-white">JSON Workspace</h2>
           <p className="text-xs text-neutral-500 dark:text-neutral-500 mt-1">Pretty print, minify, validate, and inspect JSON data locally</p>
         </div>
         <JsonActions

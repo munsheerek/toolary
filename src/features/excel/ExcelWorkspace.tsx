@@ -126,8 +126,8 @@ export const ExcelWorkspace: React.FC = () => {
       {/* Header Toolbar */}
       <div className="flex items-center justify-between border-b border-neutral-250 dark:border-neutral-855 pb-4">
         <div>
-          <h2 className="text-xl font-bold text-neutral-900 dark:text-white">Excel / CSV Viewer</h2>
-          <p className="text-xs text-neutral-500 dark:text-neutral-500 mt-1">View, sort, filter, and export CSV, XLS, and XLSX sheets in browser locally</p>
+          <h2 className="text-xl font-bold text-neutral-900 dark:text-white">Excel Workspace</h2>
+          <p className="text-xs text-neutral-500 dark:text-neutral-500 mt-1">View, filter and convert spreadsheet files.</p>
         </div>
         <ExportActions
           onExportCSV={handleExportCSV}

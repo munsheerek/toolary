@@ -1,4 +1,4 @@
-import { ArrowRight } from 'lucide-react'
+import { ArrowRight, FileSpreadsheet, Type, Database, Folder, Terminal } from 'lucide-react'
 import { useAppStore } from '../../store/useAppStore'
 import { TOOLS_CONFIG } from '../../config/tools'
 
@@ -37,19 +37,19 @@ export const HomeDashboard = () => {
               <span className="relative inline-flex rounded-full h-2 w-2 bg-violet-500"></span>
             </span>
             <span className="text-[10px] font-bold text-neutral-550 dark:text-neutral-455 uppercase tracking-widest font-mono">
-              Local-First Developer Toolbox
+              Privacy-First Workspace
             </span>
           </div>
 
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-neutral-905 dark:text-white tracking-tight leading-none">
-            Developer tools, <br className="hidden sm:inline" />
+            Your everyday workspace <br className="hidden sm:inline" />
             <span className="bg-gradient-to-r from-violet-600 via-fuchsia-600 to-blue-655 dark:from-violet-400 dark:via-fuchsia-400 dark:to-blue-400 bg-clip-text text-transparent">
-              packed in one box.
+              for data and files.
             </span>
           </h1>
 
           <p className="text-sm md:text-base text-neutral-555 dark:text-neutral-400 max-w-xl mx-auto leading-relaxed">
-            Privacy-first suite of offline utilities. Zero telemetry, zero cloud uploads. Your source code and data remain entirely inside your browser.
+            All processing happens locally in the browser. Your data stays on your device.
           </p>
         </div>
 
@@ -109,6 +109,44 @@ export const HomeDashboard = () => {
                   </div>
                 </div>
               </button>
+            )
+          })}
+          
+          {/* Coming Soon Cards */}
+          {[
+            { title: 'CSV Workspace', description: 'Explore and transform CSV data.', icon: FileSpreadsheet },
+            { title: 'Text Tools', description: 'Format and manipulate raw text.', icon: Type },
+            { title: 'SQL Tools', description: 'Format and lint SQL queries locally.', icon: Database },
+            { title: 'File Tools', description: 'Compress and encode files.', icon: Folder },
+            { title: 'Developer Tools', description: 'Local generation tools and decoders.', icon: Terminal }
+          ].map((item, index) => {
+            const Icon = item.icon
+            return (
+              <div
+                key={`coming-soon-${index}`}
+                className="group text-left p-8 bg-neutral-50/50 dark:bg-neutral-900/30 border border-neutral-200 border-dashed dark:border-neutral-800 rounded-3xl flex flex-col h-[260px] opacity-70"
+              >
+                <div className="flex items-center justify-between mb-6">
+                  <div className="p-3 bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl shrink-0">
+                    <Icon className="h-5 w-5 text-neutral-400 dark:text-neutral-500" />
+                  </div>
+                  
+                  <div className="flex items-center px-2.5 py-1 bg-neutral-200/50 dark:bg-neutral-800/50 rounded-full shrink-0">
+                    <span className="text-[9px] font-bold text-neutral-500 dark:text-neutral-400 uppercase tracking-widest font-mono">
+                      Coming Soon
+                    </span>
+                  </div>
+                </div>
+
+                <div className="flex-grow flex flex-col mb-4">
+                  <h3 className="text-xl font-bold text-neutral-600 dark:text-neutral-400 mb-2.5 tracking-tight">
+                    {item.title}
+                  </h3>
+                  <p className="text-xs text-neutral-500 dark:text-neutral-500 leading-relaxed font-normal flex-grow line-clamp-3">
+                    {item.description}
+                  </p>
+                </div>
+              </div>
             )
           })}
         </div>

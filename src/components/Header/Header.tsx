@@ -40,7 +40,7 @@ export const Header: React.FC = () => {
           </button>
         )}
         <div className="flex items-center gap-2 text-sm">
-          <span className="text-neutral-400 dark:text-neutral-500 font-medium">DevBox</span>
+          <span className="text-neutral-400 dark:text-neutral-500 font-medium">Toolary</span>
           <span className="text-neutral-350 dark:text-neutral-600">/</span>
           <span className="text-neutral-900 dark:text-neutral-200 font-semibold">{getToolTitle()}</span>
         </div>
