@@ -4,6 +4,7 @@ import {
   Minimize, 
   Sparkles, 
   CheckCircle2, 
+  GitCompare,
 } from 'lucide-react'
 
 interface JsonActionsProps {
@@ -14,6 +15,8 @@ interface JsonActionsProps {
   onDownload: () => void
   hasContent: boolean
   isMac: boolean
+  isDiffMode: boolean
+  onToggleDiff: () => void
 }
 
 export const JsonActions = ({
@@ -23,7 +26,9 @@ export const JsonActions = ({
   onCopy,
   onDownload,
   hasContent,
-  isMac
+  isMac,
+  isDiffMode,
+  onToggleDiff
 }: JsonActionsProps) => {
   const secondaryBtnClass = "flex items-center gap-1.5 px-3 py-1.8 bg-neutral-100 hover:bg-neutral-200/60 dark:bg-neutral-900 border border-neutral-250 dark:border-neutral-800 hover:border-neutral-350 dark:hover:border-neutral-700 disabled:border-neutral-200 dark:disabled:border-neutral-850 text-neutral-800 dark:text-neutral-200 disabled:text-neutral-400 dark:disabled:text-neutral-500 text-xs font-semibold rounded-lg transition-all disabled:cursor-not-allowed cursor-pointer"
 
@@ -61,6 +66,15 @@ export const JsonActions = ({
       >
         <CheckCircle2 className="h-3.5 w-3.5 text-neutral-500 dark:text-neutral-450" />
         <span>Validate</span>
+      </button>
+
+      <button
+        onClick={onToggleDiff}
+        className={`${secondaryBtnClass} ${isDiffMode ? 'bg-blue-50/50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800/50 text-blue-700 dark:text-blue-400' : ''}`}
+        title="Toggle Diff Mode"
+      >
+        <GitCompare className="h-3.5 w-3.5" />
+        <span>{isDiffMode ? 'Exit Diff' : 'Diff Mode'}</span>
       </button>
 
       <div className="h-6 w-[1px] bg-neutral-250 dark:bg-neutral-800 mx-1 hidden sm:block" />

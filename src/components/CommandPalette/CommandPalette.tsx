@@ -24,7 +24,6 @@ export const CommandPalette = () => {
   const { 
     commandPaletteOpen, 
     setCommandPaletteOpen,
-    triggerFormat,
     setActiveTool,
     toggleTheme,
     toggleSidebar,
@@ -89,12 +88,14 @@ export const CommandPalette = () => {
 
   const commands: CommandItem[] = [
     {
-      id: 'format-json',
-      title: 'Format JSON',
-      subtitle: 'Pretty print, validate and clean up JSON code',
+      id: 'open-json',
+      title: 'Open JSON Workspace',
+      subtitle: 'Format, validate, inspect and transform JSON data',
       icon: FileJson,
-      shortcut: '⌥↵',
-      action: () => triggerFormat()
+      action: () => {
+        setActiveTool('json')
+        setCommandPaletteOpen(false)
+      }
     },
     {
       id: 'open-excel',

@@ -4,8 +4,6 @@ import type { Monaco } from '@monaco-editor/react'
 import { 
   Upload, 
   FileCode, 
-  Maximize, 
-  Minimize, 
   Trash2, 
   Sparkles,
 } from 'lucide-react'
@@ -26,7 +24,6 @@ export const JsonEditor = ({
 }: JsonEditorProps) => {
   const { theme, showToast } = useAppStore()
   const [isDragOver, setIsDragOver] = useState(false)
-  const [isFullscreen, setIsFullscreen] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const isDark = theme === 'dark'
@@ -90,11 +87,7 @@ export const JsonEditor = ({
 
   return (
     <div 
-      className={`flex flex-col border border-neutral-250 dark:border-neutral-800 rounded-xl overflow-hidden bg-white dark:bg-neutral-950 transition-all duration-300 relative ${
-        isFullscreen 
-          ? 'fixed inset-4 z-50 shadow-2xl' 
-          : 'h-[500px]'
-      }`}
+      className={`flex flex-col border border-neutral-250 dark:border-neutral-800 rounded-xl overflow-hidden bg-white dark:bg-neutral-950 transition-all duration-300 relative h-[500px]`}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
@@ -153,21 +146,6 @@ export const JsonEditor = ({
           >
             <Trash2 className="h-3 w-3" />
             <span>Clear</span>
-          </button>
-
-          <div className="h-4 w-[1px] bg-neutral-250 dark:bg-neutral-850 mx-1" />
-
-          {/* Fullscreen Toggle */}
-          <button
-            onClick={() => setIsFullscreen(!isFullscreen)}
-            className="p-1.5 bg-neutral-100 hover:bg-neutral-200/50 dark:bg-neutral-900 border border-neutral-250 dark:border-neutral-850 hover:border-neutral-350 dark:hover:border-neutral-750 rounded text-neutral-600 dark:text-neutral-450 hover:text-neutral-800 dark:hover:text-neutral-200 transition-all cursor-pointer"
-            title={isFullscreen ? 'Exit Fullscreen' : 'Enter Fullscreen'}
-          >
-            {isFullscreen ? (
-              <Minimize className="h-3.5 w-3.5" />
-            ) : (
-              <Maximize className="h-3.5 w-3.5" />
-            )}
           </button>
         </div>
       </div>
