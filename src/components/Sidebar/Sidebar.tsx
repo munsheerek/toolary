@@ -2,7 +2,12 @@ import { useMemo } from 'react'
 import { 
   ChevronLeft, 
   Home, 
-  Cpu
+  Library,
+  FileSpreadsheet,
+  Type,
+  Database,
+  Folder,
+  Terminal
 } from 'lucide-react'
 import { useAppStore } from '../../store/useAppStore'
 import { TOOLS_CONFIG } from '../../config/tools'
@@ -46,16 +51,16 @@ export const Sidebar = () => {
         {sidebarOpen ? (
           <div className="flex items-center gap-2 font-bold text-lg text-neutral-900 dark:text-white select-none">
             <div className="bg-violet-600/10 text-violet-600 dark:bg-violet-600/20 dark:text-violet-400 p-1.5 rounded-lg border border-violet-500/20 dark:border-violet-500/30">
-              <Cpu className="h-5 w-5" />
+              <Library className="h-5 w-5" />
             </div>
-            <span>DevBox</span>
+            <span>Toolary</span>
             <span className="text-[10px] font-medium bg-neutral-200 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400 px-1.5 py-0.5 rounded border border-neutral-300 dark:border-neutral-700">
               v1.0
             </span>
           </div>
         ) : (
           <div className="mx-auto bg-violet-600/10 text-violet-600 dark:bg-violet-600/20 dark:text-violet-400 p-1.5 rounded-lg border border-violet-500/20 dark:border-violet-500/30">
-            <Cpu className="h-5 w-5" />
+            <Library className="h-5 w-5" />
           </div>
         )}
         
@@ -107,6 +112,37 @@ export const Sidebar = () => {
                     New
                   </span>
                 )}
+              </button>
+            )
+          })}
+        </div>
+
+        {/* Coming soon */}
+        <div className="space-y-1 px-2 mt-4">
+          {sidebarOpen && (
+            <p className="text-[10px] font-semibold text-neutral-400 dark:text-neutral-500 px-3 uppercase tracking-wider mb-2">
+              Coming Soon
+            </p>
+          )}
+          {[
+            { label: 'CSV Workspace', icon: FileSpreadsheet },
+            { label: 'Text Tools', icon: Type },
+            { label: 'SQL Tools', icon: Database },
+            { label: 'File Tools', icon: Folder },
+            { label: 'Developer Tools', icon: Terminal },
+          ].map((item, i) => {
+            const Icon = item.icon
+            return (
+              <button
+                key={i}
+                disabled
+                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 text-neutral-400 dark:text-neutral-600 cursor-not-allowed opacity-60"
+                title={!sidebarOpen ? `${item.label} (Coming Soon)` : undefined}
+              >
+                <div className="relative shrink-0">
+                  <Icon className="h-4 w-4 shrink-0" />
+                </div>
+                {sidebarOpen && <span>{item.label}</span>}
               </button>
             )
           })}

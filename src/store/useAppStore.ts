@@ -26,8 +26,15 @@ interface AppState {
 }
 
 export const useAppStore = create<AppState>((set) => {
+  // Migrate old key if exists
+  const legacyTheme = localStorage.getItem('devbox-theme')
+  if (legacyTheme) {
+    localStorage.setItem('toolary-theme', legacyTheme)
+    localStorage.removeItem('devbox-theme')
+  }
+
   // Load initial theme from localStorage or system preference, default to dark
-  const savedTheme = localStorage.getItem('devbox-theme') as 'dark' | 'light' | null
+  const savedTheme = localStorage.getItem('toolary-theme') as 'dark' | 'light' | null
   const initialTheme = savedTheme || 'dark'
 
   // Apply initial theme class to HTML element
@@ -49,7 +56,7 @@ export const useAppStore = create<AppState>((set) => {
     
     toggleTheme: () => set((state) => {
       const nextTheme = state.theme === 'dark' ? 'light' : 'dark'
-      localStorage.setItem('devbox-theme', nextTheme)
+      localStorage.setItem('toolary-theme', nextTheme)
       if (nextTheme === 'dark') {
         document.documentElement.classList.add('dark')
       } else {
@@ -59,7 +66,7 @@ export const useAppStore = create<AppState>((set) => {
     }),
 
     setTheme: (theme) => {
-      localStorage.setItem('devbox-theme', theme)
+      localStorage.setItem('toolary-theme', theme)
       if (theme === 'dark') {
         document.documentElement.classList.add('dark')
       } else {
