@@ -24,7 +24,6 @@ export const CommandPalette = () => {
   const { 
     commandPaletteOpen, 
     setCommandPaletteOpen,
-    triggerFormat,
     setActiveTool,
     toggleTheme,
     toggleSidebar,

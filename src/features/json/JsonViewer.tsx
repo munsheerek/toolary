@@ -7,7 +7,6 @@ import {
   Maximize2, 
   Minimize2,
   Maximize,
-  Minimize,
   FolderTree,
   Copy,
   X

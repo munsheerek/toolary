@@ -4,8 +4,6 @@ import type { Monaco } from '@monaco-editor/react'
 import { 
   Upload, 
   FileCode, 
-  Maximize, 
-  Minimize, 
   Trash2, 
   Sparkles,
 } from 'lucide-react'

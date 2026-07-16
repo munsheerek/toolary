@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState } from 'react'
 import { DiffEditor } from '@monaco-editor/react'
 import type { Monaco } from '@monaco-editor/react'
 import { 
