@@ -69,7 +69,7 @@ src/
 ### Installation
 1. Clone the repository or navigate to the directory:
    ```bash
-   cd /Users/munsheerek/Projects/hobby-projects/devbox
+   cd /Users/munsheerek/Projects/hobby-projects/toolary
    ```
 2. Install dependencies:
    ```bash

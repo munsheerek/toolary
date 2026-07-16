@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from 'react'
 import { AlertCircle } from 'lucide-react'
 import { JsonEditor } from './JsonEditor'
+import { JsonDiffEditor } from './JsonDiffEditor'
 import { JsonViewer } from './JsonViewer'
 import { JsonActions } from './JsonActions'
 import { JsonInfo } from './JsonInfo'
@@ -37,6 +38,10 @@ export const JsonWorkspace: React.FC = () => {
   const { formatTrigger, showToast } = useAppStore()
   const [jsonStr, setJsonStr] = useState('')
   const [validationError, setValidationError] = useState<JsonValidationError | null>(null)
+  
+  // Diff Mode state
+  const [isDiffMode, setIsDiffMode] = useState(false)
+  const [diffOriginal, setDiffOriginal] = useState('{\n  // Paste your original JSON here\n}')
   
   // Format json and update state
   const handleFormat = () => {
@@ -184,45 +189,57 @@ export const JsonWorkspace: React.FC = () => {
           onDownload={handleDownload}
           hasContent={!!jsonStr.trim()}
           isMac={isMac}
+          isDiffMode={isDiffMode}
+          onToggleDiff={() => setIsDiffMode(!isDiffMode)}
         />
       </div>
 
       {/* Info Stats Panel */}
       <JsonInfo stats={stats} />
 
-      {/* Workspace Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 min-h-0">
-        {/* Editor Container */}
-        <div className="flex flex-col gap-4">
-          <JsonEditor
-            value={jsonStr}
-            onChange={setJsonStr}
-            onLoadSample={handleLoadSample}
-            onClear={handleClear}
+      {/* Workspace Area */}
+      {isDiffMode ? (
+        <div className="flex-1 min-h-0">
+          <JsonDiffEditor 
+            originalValue={diffOriginal}
+            modifiedValue={jsonStr}
+            onOriginalChange={setDiffOriginal}
           />
-          
-          {/* Validation Error Banner */}
-          {validationError && (
-            <div className="bg-rose-500/10 border border-rose-500/25 text-rose-600 dark:text-rose-400 p-4 rounded-xl flex items-start gap-3 select-none animate-fade-in">
-              <AlertCircle className="h-5 w-5 shrink-0 mt-0.5" />
-              <div>
-                <h4 className="font-bold text-sm text-neutral-900 dark:text-neutral-200">Invalid JSON</h4>
-                <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1">{validationError.message}</p>
-                {(validationError.line !== undefined || validationError.column !== undefined) && (
-                  <span className="inline-block mt-2 px-1.5 py-0.5 bg-rose-550/20 text-rose-700 dark:text-rose-300 border border-rose-550/30 text-[10px] font-mono rounded">
-                    Error at line {validationError.line}, column {validationError.column}
-                  </span>
-                )}
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 min-h-0">
+          {/* Editor Container */}
+          <div className="flex flex-col gap-4">
+            <JsonEditor
+              value={jsonStr}
+              onChange={setJsonStr}
+              onLoadSample={handleLoadSample}
+              onClear={handleClear}
+            />
+            
+            {/* Validation Error Banner */}
+            {validationError && (
+              <div className="bg-rose-500/10 border border-rose-500/25 text-rose-600 dark:text-rose-400 p-4 rounded-xl flex items-start gap-3 select-none animate-fade-in">
+                <AlertCircle className="h-5 w-5 shrink-0 mt-0.5" />
+                <div>
+                  <h4 className="font-bold text-sm text-neutral-900 dark:text-neutral-200">Invalid JSON</h4>
+                  <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1">{validationError.message}</p>
+                  {(validationError.line !== undefined || validationError.column !== undefined) && (
+                    <span className="inline-block mt-2 px-1.5 py-0.5 bg-rose-550/20 text-rose-700 dark:text-rose-300 border border-rose-550/30 text-[10px] font-mono rounded">
+                      Error at line {validationError.line}, column {validationError.column}
+                    </span>
+                  )}
+                </div>
               </div>
-            </div>
-          )}
-        </div>
+            )}
+          </div>
 
-        {/* Tree View Container */}
-        <div className="h-[500px]">
-          <JsonViewer data={parsedData} />
+          {/* Tree View Container */}
+          <div className="h-[500px]">
+            <JsonViewer data={parsedData} />
+          </div>
         </div>
-      </div>
+      )}
     </div>
   )
 }

@@ -26,12 +26,7 @@ interface AppState {
 }
 
 export const useAppStore = create<AppState>((set) => {
-  // Migrate old key if exists
-  const legacyTheme = localStorage.getItem('devbox-theme')
-  if (legacyTheme) {
-    localStorage.setItem('toolary-theme', legacyTheme)
-    localStorage.removeItem('devbox-theme')
-  }
+
 
   // Load initial theme from localStorage or system preference, default to dark
   const savedTheme = localStorage.getItem('toolary-theme') as 'dark' | 'light' | null

@@ -1,12 +1,24 @@
 import { useState, useEffect, useMemo } from 'react'
+import { createPortal } from 'react-dom'
 import { 
   ChevronRight, 
   ChevronDown, 
   Search, 
   Maximize2, 
   Minimize2,
-  FolderTree
+  Maximize,
+  Minimize,
+  FolderTree,
+  Copy,
+  X
 } from 'lucide-react'
+
+// Helper to escape object keys that have special characters or spaces
+const escapePathKey = (key: string | number) => {
+  if (typeof key === 'number') return `[${key}]`
+  if (/^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(key)) return `.${key}`
+  return `["${key}"]`
+}
 
 interface JsonViewerProps {
   data: any
@@ -62,6 +74,8 @@ interface TreeNodeProps {
   depth: number
   searchTerm: string
   forceExpanded: boolean | null
+  currentPath: string
+  onCopyPath: (path: string) => void
 }
 
 const TreeNode = ({ 
@@ -69,7 +83,9 @@ const TreeNode = ({
   value, 
   depth, 
   searchTerm, 
-  forceExpanded 
+  forceExpanded,
+  currentPath,
+  onCopyPath
 }: TreeNodeProps) => {
   const isObject = value !== null && typeof value === 'object'
   const isArray = Array.isArray(value)
@@ -140,7 +156,7 @@ const TreeNode = ({
   return (
     <div className="flex flex-col ml-4">
       <div 
-        className="flex items-center gap-1.5 py-1 hover:bg-neutral-200/50 dark:hover:bg-neutral-900/60 rounded px-1 group cursor-pointer text-xs"
+        className="flex items-center gap-1.5 py-1 hover:bg-neutral-200/50 dark:hover:bg-neutral-900/60 rounded px-1 group cursor-pointer text-xs relative"
         onClick={isObject ? toggleExpand : undefined}
       >
         {isObject ? (
@@ -179,20 +195,39 @@ const TreeNode = ({
             ... {isArray ? ']' : '}'}
           </span>
         )}
+
+        {/* Copy Path Action */}
+        <button
+          onClick={(e) => {
+            e.stopPropagation()
+            onCopyPath(currentPath)
+          }}
+          className="ml-auto opacity-0 group-hover:opacity-100 p-1 hover:bg-neutral-300 dark:hover:bg-neutral-800 rounded text-neutral-500 hover:text-neutral-800 dark:hover:text-neutral-200 transition-all focus:outline-none shrink-0"
+          title={`Copy path: ${currentPath || 'root'}`}
+        >
+          <Copy className="h-3 w-3" />
+        </button>
       </div>
 
       {isObject && isExpanded && (
         <div className="border-l border-neutral-200 dark:border-neutral-800/80 ml-2">
-          {renderedChildren.map(([key, val]) => (
-            <TreeNode
-              key={String(key)}
-              name={isArray ? null : key}
-              value={val}
-              depth={depth + 1}
-              searchTerm={searchTerm}
-              forceExpanded={forceExpanded}
-            />
-          ))}
+          {renderedChildren.map(([key, val]) => {
+            const nextPath = depth === 0 && currentPath === '' 
+              ? (typeof key === 'number' ? `[${key}]` : String(key))
+              : `${currentPath}${escapePathKey(key)}`
+            return (
+              <TreeNode
+                key={String(key)}
+                name={isArray ? null : key}
+                value={val}
+                depth={depth + 1}
+                searchTerm={searchTerm}
+                forceExpanded={forceExpanded}
+                currentPath={nextPath}
+                onCopyPath={onCopyPath}
+              />
+            )
+          })}
           {renderedChildren.length === 0 && searchTerm && (
             <div className="pl-4 py-0.5 text-neutral-450 dark:text-neutral-600 italic font-mono text-[10px]">
               No matches inside
@@ -210,6 +245,28 @@ const TreeNode = ({
 export const JsonViewer = ({ data }: JsonViewerProps) => {
   const [searchTerm, setSearchTerm] = useState('')
   const [forceExpanded, setForceExpanded] = useState<boolean | null>(null)
+  const [isFullscreen, setIsFullscreen] = useState(false)
+  
+  // Close fullscreen on Escape
+  useEffect(() => {
+    if (!isFullscreen) return
+    
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        e.preventDefault()
+        setIsFullscreen(false)
+      }
+    }
+    
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [isFullscreen])
+  
+  // Custom Toast could be imported if we wanted to show a success message, 
+  // but we can just use a simple clipboard write for now.
+  const handleCopyPath = (path: string) => {
+    navigator.clipboard.writeText(path || 'root').catch(console.error)
+  }
 
   // Check if root data is object
   const isRootObject = data !== null && typeof data === 'object'
@@ -226,65 +283,87 @@ export const JsonViewer = ({ data }: JsonViewerProps) => {
     setTimeout(() => setForceExpanded(null), 50)
   }
 
-  return (
-    <div className="flex flex-col h-full bg-white dark:bg-neutral-950 border border-neutral-250 dark:border-neutral-800 rounded-xl overflow-hidden animate-fade-in select-none">
+  const renderContent = () => (
+    <>
       {/* Header toolbar */}
-      <div className="h-11 border-b border-neutral-250 dark:border-neutral-800 bg-neutral-100/40 dark:bg-neutral-900/40 px-4 flex items-center justify-between select-none">
-        <div className="flex items-center gap-2 text-xs font-semibold text-neutral-550 dark:text-neutral-400">
+      <div className="min-h-[44px] h-auto border-b border-neutral-250 dark:border-neutral-800 bg-neutral-100/40 dark:bg-neutral-900/40 px-4 py-2 flex flex-wrap items-center justify-between gap-y-2 gap-x-4 select-none shrink-0">
+        <div className="flex items-center gap-2 text-xs font-semibold text-neutral-550 dark:text-neutral-400 whitespace-nowrap shrink-0">
           <FolderTree className="h-3.5 w-3.5 text-violet-500 dark:text-violet-400" />
           <span>Interactive Tree View</span>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
           {/* Search */}
           <div className="relative">
             <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3 w-3 text-neutral-500" />
             <input
               type="text"
-              placeholder="Search keys / values..."
+              placeholder="Search keys/values..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="bg-neutral-105 hover:bg-neutral-200/50 dark:bg-neutral-900 border border-neutral-250 dark:border-neutral-850 hover:border-neutral-350 dark:hover:border-neutral-750 focus:border-violet-500 text-neutral-800 dark:text-neutral-200 text-[11px] rounded-lg pl-7 pr-2.5 py-1 w-44 outline-none transition-all placeholder-neutral-500"
+              className="bg-neutral-105 hover:bg-neutral-200/50 dark:bg-neutral-900 border border-neutral-250 dark:border-neutral-850 hover:border-neutral-350 dark:hover:border-neutral-750 focus:border-violet-500 text-neutral-800 dark:text-neutral-200 text-[11px] rounded-lg pl-7 pr-2.5 py-1 w-32 md:w-40 xl:w-44 outline-none transition-all placeholder-neutral-500"
             />
           </div>
 
-          <div className="h-4 w-[1px] bg-neutral-250 dark:bg-neutral-800" />
+          <div className="h-4 w-[1px] bg-neutral-250 dark:bg-neutral-800 hidden sm:block" />
 
           {/* Action buttons */}
-          <button
-            onClick={handleExpandAll}
-            className="flex items-center gap-1 text-[10px] font-semibold text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-250 bg-neutral-100 hover:bg-neutral-200/50 dark:bg-neutral-900 border border-neutral-250 dark:border-neutral-800 hover:border-neutral-350 dark:hover:border-neutral-700 px-2 py-1 rounded transition-all cursor-pointer"
-            title="Expand All"
-          >
-            <Maximize2 className="h-2.5 w-2.5" />
-            <span>Expand All</span>
-          </button>
-          <button
-            onClick={handleCollapseAll}
-            className="flex items-center gap-1 text-[10px] font-semibold text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-250 bg-neutral-100 hover:bg-neutral-200/50 dark:bg-neutral-900 border border-neutral-250 dark:border-neutral-800 hover:border-neutral-350 dark:hover:border-neutral-700 px-2 py-1 rounded transition-all cursor-pointer"
-            title="Collapse All"
-          >
-            <Minimize2 className="h-2.5 w-2.5" />
-            <span>Collapse All</span>
-          </button>
+          <div className="flex items-center gap-1.5">
+            <button
+              onClick={handleExpandAll}
+              className="flex items-center gap-1 text-[10px] font-semibold text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-250 bg-neutral-100 hover:bg-neutral-200/50 dark:bg-neutral-900 border border-neutral-250 dark:border-neutral-800 hover:border-neutral-350 dark:hover:border-neutral-700 px-2 py-1 rounded transition-all cursor-pointer"
+              title="Expand All"
+            >
+              <Maximize2 className="h-2.5 w-2.5" />
+              <span className="hidden xl:inline">Expand All</span>
+            </button>
+            <button
+              onClick={handleCollapseAll}
+              className="flex items-center gap-1 text-[10px] font-semibold text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-250 bg-neutral-100 hover:bg-neutral-200/50 dark:bg-neutral-900 border border-neutral-250 dark:border-neutral-800 hover:border-neutral-350 dark:hover:border-neutral-700 px-2 py-1 rounded transition-all cursor-pointer"
+              title="Collapse All"
+            >
+              <Minimize2 className="h-2.5 w-2.5" />
+              <span className="hidden xl:inline">Collapse All</span>
+            </button>
+
+            <div className="h-4 w-[1px] bg-neutral-250 dark:bg-neutral-800 mx-0.5" />
+
+            {/* Fullscreen Toggle */}
+            <button
+              onClick={() => setIsFullscreen(!isFullscreen)}
+              className="flex items-center gap-1 p-1.5 bg-neutral-100 hover:bg-neutral-200/50 dark:bg-neutral-900 border border-neutral-250 dark:border-neutral-850 hover:border-neutral-350 dark:hover:border-neutral-750 rounded text-neutral-600 dark:text-neutral-450 hover:text-neutral-800 dark:hover:text-neutral-200 transition-all cursor-pointer"
+              title={isFullscreen ? 'Close Fullscreen' : 'Enter Fullscreen'}
+            >
+              {isFullscreen ? (
+                <>
+                  <X className="h-3.5 w-3.5" />
+                  <span className="text-[10px] font-semibold pr-0.5">Close</span>
+                </>
+              ) : (
+                <Maximize className="h-3.5 w-3.5" />
+              )}
+            </button>
+          </div>
         </div>
       </div>
 
       {/* Tree Content area */}
-      <div className="flex-1 overflow-auto p-4 select-text max-h-[500px]">
+      <div className={`flex-1 overflow-auto p-4 select-text ${isFullscreen ? 'h-full' : 'max-h-[500px]'}`}>
         {data === undefined ? (
           <div className="h-full flex items-center justify-center text-neutral-500 text-xs italic">
             No JSON loaded
           </div>
         ) : (
-          <div className="font-mono -ml-4 select-text">
+          <div className="font-mono text-sm leading-6">
             {isRootObject ? (
               <TreeNode 
                 name={null} 
                 value={data} 
                 depth={0} 
                 searchTerm={searchTerm} 
-                forceExpanded={forceExpanded} 
+                forceExpanded={forceExpanded}
+                currentPath=""
+                onCopyPath={handleCopyPath}
               />
             ) : (
               <div className="ml-4 py-1 text-xs">
@@ -293,13 +372,50 @@ export const JsonViewer = ({ data }: JsonViewerProps) => {
                   value={data} 
                   depth={0} 
                   searchTerm={searchTerm} 
-                  forceExpanded={forceExpanded} 
+                  forceExpanded={forceExpanded}
+                  currentPath=""
+                  onCopyPath={handleCopyPath}
                 />
               </div>
             )}
           </div>
         )}
       </div>
+    </>
+  )
+
+  if (isFullscreen) {
+    return (
+      <>
+        {/* Placeholder in grid when fullscreen */}
+        <div className="flex flex-col bg-neutral-50 dark:bg-neutral-900/30 border border-dashed border-neutral-250 dark:border-neutral-800 rounded-xl h-full items-center justify-center text-neutral-400 dark:text-neutral-500 gap-2 select-none">
+          <FolderTree className="h-5 w-5 opacity-50" />
+          <span className="text-xs">Tree View is open in fullscreen</span>
+        </div>
+        
+        {/* Portal for fullscreen modal */}
+        {createPortal(
+          <div className="fixed inset-0 z-[100] flex items-center justify-center">
+            {/* Backdrop */}
+            <div 
+              className="absolute inset-0 bg-black/40 dark:bg-black/60 backdrop-blur-sm animate-fade-in"
+              onClick={() => setIsFullscreen(false)}
+            />
+            
+            {/* Modal */}
+            <div className="relative flex flex-col bg-white dark:bg-neutral-950 border border-neutral-250 dark:border-neutral-800 rounded-xl overflow-hidden animate-fade-in select-none w-[95vw] max-w-5xl h-[90vh] shadow-2xl ring-1 ring-neutral-200/50 dark:ring-neutral-800/50">
+              {renderContent()}
+            </div>
+          </div>,
+          document.body
+        )}
+      </>
+    )
+  }
+
+  return (
+    <div className="flex flex-col bg-white dark:bg-neutral-950 border border-neutral-250 dark:border-neutral-800 rounded-xl overflow-hidden animate-fade-in select-none h-full">
+      {renderContent()}
     </div>
   )
 }
