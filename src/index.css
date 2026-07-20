@@ -1,85 +1,54 @@
-@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap');
 
-@custom-variant dark (&:where(.dark, .dark *));
-
-@layer base {
-  body {
-    @apply bg-neutral-50 text-neutral-950 antialiased font-sans transition-colors duration-200 dark:bg-neutral-950 dark:text-neutral-100;
-  }
+:root {
+  --bg: #131211;
+  --fg-rgb: 236, 232, 225;
+  --sf-rgb: 255, 255, 255;
+  --panel: #1b1917;
+  --toast: #22201d;
+  --scrim: rgba(8, 7, 6, 0.62);
+  --accent: #E8B75C;
+  --accent-d: #c9954a;
+  --accent-rgb: 232, 183, 92;
 }
 
-/* Custom scrollbar for premium feel */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  background: var(--bg);
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', system-ui, sans-serif;
+  letter-spacing: -0.011em;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
-
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
+a { color: var(--accent); text-decoration: none; }
+a:hover { color: #f2c977; }
+::selection { background: rgba(var(--accent-rgb), 0.28); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
 ::-webkit-scrollbar-thumb {
-  background: #262626;
-  border-radius: 4px;
+  background: rgba(var(--sf-rgb), 0.09);
+  border-radius: 8px;
+  border: 3px solid transparent;
+  background-clip: padding-box;
 }
+input { font-family: inherit; }
 
-::-webkit-scrollbar-thumb:hover {
-  background: #404040;
-}
+/* --- hover states (design used inline style-hover; centralized here) --- */
+.ws-card:hover { transform: translateY(-2px); border-color: rgba(var(--accent-rgb), 0.28) !important; }
+.ws-quick:hover { background: rgba(var(--accent-rgb), 0.14) !important; color: rgb(var(--accent-rgb)) !important; }
+.hov-fg:hover { color: rgb(var(--fg-rgb)) !important; }
+.hov-accent:hover { color: rgb(var(--accent-rgb)) !important; }
+.hov-bg:hover { background: rgba(var(--sf-rgb), 0.06) !important; }
+.hov-row:hover { background: rgba(var(--sf-rgb), 0.035) !important; }
+.hov-soft:hover { background: rgba(var(--sf-rgb), 0.08) !important; }
+.hov-search:hover { border-color: rgba(var(--accent-rgb), 0.4) !important; background: rgba(var(--sf-rgb), 0.05) !important; }
+.hov-searchbtn:hover { border-color: rgba(var(--accent-rgb), 0.4) !important; color: rgb(var(--fg-rgb)) !important; }
+.hov-drop:hover { border-color: rgba(var(--accent-rgb), 0.5) !important; background: rgba(var(--accent-rgb), 0.03) !important; }
+.hov-danger:hover { color: rgb(226, 144, 144) !important; }
+.hov-github:hover { color: var(--accent) !important; border-color: rgba(var(--accent-rgb), 0.4) !important; background: rgba(var(--accent-rgb), 0.07) !important; }
+.hov-morebtn:hover { color: rgb(var(--fg-rgb)) !important; border-color: rgba(var(--sf-rgb), 0.16) !important; }
 
-/* Monaco editor styles overriding */
-.monaco-editor {
-  padding-top: 8px;
-  padding-bottom: 8px;
-}
-
-/* Custom fade-in micro-animations */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(4px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.animate-fade-in {
-  animation: fadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-/* Pull switch chain spring animation */
-@keyframes pullChain {
-  0% {
-    transform: translateY(0);
-  }
-  30% {
-    transform: translateY(14px);
-  }
-  60% {
-    transform: translateY(-3px);
-  }
-  85% {
-    transform: translateY(1px);
-  }
-  100% {
-    transform: translateY(0);
-  }
-}
-
-.animate-pull {
-  animation: pullChain 0.45s cubic-bezier(0.25, 1, 0.5, 1);
-}
-
-/* Decorative dot matrix grid */
-.bg-grid-pattern {
-  background-image: radial-gradient(rgba(120, 119, 198, 0.1) 1.5px, transparent 1.5px);
-  background-size: 24px 24px;
-}
-.dark .bg-grid-pattern {
-  background-image: radial-gradient(rgba(255, 255, 255, 0.03) 1.5px, transparent 1.5px);
-  background-size: 24px 24px;
-}
-
-
+@keyframes omFade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes omPop { from { opacity: 0; transform: translateY(14px) scale(0.98); } to { opacity: 1; transform: none; } }
+@keyframes toastIn { from { opacity: 0; transform: translate(-50%, 14px); } to { opacity: 1; transform: translate(-50%, 0); } }
+@keyframes menuIn { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
