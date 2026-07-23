@@ -1,7 +1,7 @@
 // Workspace catalog + demo content, ported from the Toolary design.
 
 export interface Workspace {
-  id: 'json' | 'excel'
+  id: 'json' | 'excel' | 'markdown'
   name: string
   abbr: string
   color: string
@@ -20,6 +20,11 @@ export const WS: Workspace[] = [
     id: 'excel', name: 'Excel', abbr: 'XLS', color: 'rgb(150,178,140)',
     desc: 'Convert, clean and diff CSV, XLSX and tabular data.', count: 7,
     tools: ['CSV to JSON', 'JSON to CSV', 'XLSX to CSV', 'Column Extract', 'Dedupe Rows', 'Sheet Diff', 'Table View'],
+  },
+  {
+    id: 'markdown', name: 'Markdown', abbr: 'MD', color: '#6A95F9',
+    desc: 'Write, format, and organize markdown notes with a split-pane editor.', count: 2,
+    tools: ['Split Pane Editor', 'Export to HTML'],
   },
 ]
 
@@ -72,4 +77,5 @@ export const MODE_MAP: Record<string, string> = {
 export const LANDING_TOOL: Record<string, string> = {
   json: 'Tree View',
   excel: 'Table View',
+  markdown: 'Split Pane Editor',
 }

@@ -7,7 +7,7 @@ const boxBtn = {
   background: 'rgba(var(--sf-rgb),.04)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
 }
 
-export function WorkspaceHeader({ view, name, subtitle, compactSearch }: { view: View; name: string; subtitle: string; compactSearch?: boolean }) {
+export function WorkspaceHeader({ view, name, subtitle, compactSearch, actions }: { view: View; name: string; subtitle: string; compactSearch?: boolean; actions?: React.ReactNode }) {
   const goHome = useAppStore((s) => s.goHome)
   const openPalette = useAppStore((s) => s.openPalette)
   const toggleFav = useAppStore((s) => s.toggleFav)
@@ -23,6 +23,11 @@ export function WorkspaceHeader({ view, name, subtitle, compactSearch }: { view:
         <div style={{ fontSize: 11.5, color: 'rgba(var(--fg-rgb),.4)', fontFamily: "'JetBrains Mono'", marginTop: 1 }}>{subtitle}</div>
       </div>
       <div style={{ flex: 1 }} />
+      {actions && (
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginRight: 16, borderRight: '1px solid rgba(var(--sf-rgb),.1)', paddingRight: 24 }}>
+          {actions}
+        </div>
+      )}
       {compactSearch ? (
         <button onClick={openPalette} title="Search tools" style={{ ...boxBtn, color: 'rgba(var(--fg-rgb),.55)' }}>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round"><circle cx="11" cy="11" r="7" /><path d="M20 20l-3.5-3.5" /></svg>
