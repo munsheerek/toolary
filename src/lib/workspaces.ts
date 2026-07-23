@@ -28,8 +28,8 @@ export const WS: Workspace[] = [
   },
   {
     id: 'dev', name: 'Developer', abbr: 'DEV', color: '#FF7B72',
-    desc: 'Essential local-first utilities for encoding, hashing, and token decoding.', count: 7,
-    tools: ['JWT Decoder', 'Base64 Encode/Decode', 'URL Encode/Decode', 'Hash Generator', 'UUID Generator', 'HTML Entity Encode/Decode', 'Color Converter'],
+    desc: 'Essential local-first utilities for encoding, hashing, and token decoding.', count: 11,
+    tools: ['JWT Decoder', 'Base64 Encode/Decode', 'URL Encode/Decode', 'Hash Generator', 'UUID Generator', 'HTML Entity Encode/Decode', 'Color Converter', 'Password Generator', 'Sample Data Downloader', 'Lorem Ipsum Generator', 'Placeholder Image Generator'],
   },
 ]
 
