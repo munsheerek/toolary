@@ -4,7 +4,7 @@ import { wsById, MODE_MAP, LANDING_TOOL, SAMPLE, SAMPLE_B } from '../lib/workspa
 import { parseJson, prettyJson } from '../lib/json'
 import { parseCSV, filterRows, colLabel, type SheetData, type Aggregate } from '../lib/table'
 
-export type View = 'home' | 'json' | 'excel'
+export type View = 'home' | 'json' | 'excel' | 'markdown' | 'dev'
 
 export interface RecentItem { name: string; wsId: string; ts: number }
 export interface XFile { name: string; size: number; type: string }
@@ -114,6 +114,17 @@ interface AppState {
   excelCopy: () => void
   excelCSV: () => void
   excelJSON: () => void
+
+  // markdown
+  mdFiles: { id: string; name: string; content: string }[]
+  mdActiveId: string | null
+  mdSearch: string
+
+  createMdFile: () => void
+  setMdActiveId: (id: string) => void
+  updateMdFile: (id: string, content: string) => void
+  deleteMdFile: (id: string) => void
+  setMdSearch: (q: string) => void
 }
 
 const ns = (kind: string) => 'toolary.' + kind
@@ -164,6 +175,10 @@ export const useAppStore = create<AppState>((set, get) => ({
   pValue: -1,
   pAgg: 'count',
 
+  mdFiles: [],
+  mdActiveId: null,
+  mdSearch: '',
+
   init: () => {
     const theme = (get_('toolary.theme') as Theme) || 'dark'
     const seed = CONFIG.seedDemoData !== false
@@ -186,9 +201,19 @@ export const useAppStore = create<AppState>((set, get) => ({
     }
     recents = recents.filter((r) => { const w = wsById(r.wsId); return w && w.tools.includes(r.name) })
     favs = favs.filter((id) => !!wsById(id))
+
+    const mk = get_(ns('mdFiles'))
+    let mdFiles: { id: string; name: string; content: string }[] = []
+    if (mk) {
+      mdFiles = JSON.parse(mk)
+    } else {
+      mdFiles = [{ id: '1', name: 'Welcome.md', content: '# Welcome to Toolary Markdown\\n\\nStart typing your markdown here...' }]
+      set_(ns('mdFiles'), JSON.stringify(mdFiles))
+    }
+
     set_(ns('recents'), JSON.stringify(recents))
     set_(ns('favs'), JSON.stringify(favs))
-    set({ theme, recents, favs })
+    set({ theme, recents, favs, mdFiles, mdActiveId: mdFiles.length > 0 ? mdFiles[0].id : null })
   },
 
   toast_: (msg) => {
@@ -214,7 +239,7 @@ export const useAppStore = create<AppState>((set, get) => ({
 
   launchTool: (name, wsId) => {
     const recents = pushRecent(get().recents, name, wsId)
-    const mode = MODE_MAP[name] || 'Tree View'
+    const mode = MODE_MAP[name] || name
     const fs = name === 'Fullscreen Tree'
     const ji = wsId === 'json' ? prettyJson(get().jsonInput) : get().jsonInput
     set({ recents, paletteOpen: false, view: wsId as View, mode: fs ? 'Tree View' : mode, fullscreen: fs, jsonInput: ji, collapsed: {} })
@@ -224,7 +249,7 @@ export const useAppStore = create<AppState>((set, get) => ({
     const name = LANDING_TOOL[wsId] || (wsById(wsId)?.tools[0] ?? '')
     const recents = pushRecent(get().recents, name, wsId)
     const ji = wsId === 'json' ? prettyJson(get().jsonInput) : get().jsonInput
-    set({ recents, paletteOpen: false, view: wsId as View, mode: 'Tree View', fullscreen: false, jsonInput: ji, collapsed: {} })
+    set({ recents, paletteOpen: false, view: wsId as View, mode: name, fullscreen: false, jsonInput: ji, collapsed: {} })
   },
 
   setJsonInput: (v) => set({ jsonInput: v }),
@@ -402,6 +427,35 @@ export const useAppStore = create<AppState>((set, get) => ({
     })
     get().downloadOut(JSON.stringify(arr, null, 2), 'json')
   },
+
+  createMdFile: () => {
+    const id = Date.now().toString()
+    const newFile = { id, name: `Untitled-${id.slice(-4)}.md`, content: '# Untitled\\n\\n' }
+    const mdFiles = [...get().mdFiles, newFile]
+    set_(ns('mdFiles'), JSON.stringify(mdFiles))
+    set({ mdFiles, mdActiveId: id })
+  },
+  setMdActiveId: (id) => set({ mdActiveId: id }),
+  updateMdFile: (id, content) => {
+    const mdFiles = get().mdFiles.map(f => f.id === id ? { ...f, content } : f)
+    const match = content.match(/^#\\s+(.+)$/m)
+    if (match) {
+        let title = match[1].trim()
+        if (!title) title = 'Untitled'
+        const currentFile = mdFiles.find(f => f.id === id)
+        if (currentFile && currentFile.name !== title + '.md') {
+            currentFile.name = title + '.md'
+        }
+    }
+    set_(ns('mdFiles'), JSON.stringify(mdFiles))
+    set({ mdFiles })
+  },
+  deleteMdFile: (id) => {
+    const mdFiles = get().mdFiles.filter(f => f.id !== id)
+    set_(ns('mdFiles'), JSON.stringify(mdFiles))
+    set({ mdFiles, mdActiveId: mdFiles.length ? mdFiles[0].id : null })
+  },
+  setMdSearch: (q) => set({ mdSearch: q }),
 }))
 
 function colVals(s: AppState, ci: number): string[] {

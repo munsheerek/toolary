@@ -5,6 +5,8 @@ import { Header } from './components/Header'
 import { HomeView } from './components/HomeView'
 import { JsonWorkspace } from './components/JsonWorkspace'
 import { ExcelWorkspace } from './components/ExcelWorkspace'
+import { MarkdownWorkspace } from './components/MarkdownWorkspace'
+import { DevWorkspace } from './components/DevWorkspace'
 import { CommandPalette } from './components/CommandPalette'
 import { DistinctModal, FullscreenTree } from './components/Overlays'
 import { Toast } from './components/Toast'
@@ -62,6 +64,8 @@ function App() {
         {view === 'home' && <HomeView />}
         {view === 'json' && <JsonWorkspace />}
         {view === 'excel' && <ExcelWorkspace />}
+        {view === 'markdown' && <MarkdownWorkspace />}
+        {view === 'dev' && <DevWorkspace />}
       </div>
 
       <FullscreenTree />

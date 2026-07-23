@@ -7,7 +7,7 @@ const boxBtn = {
   background: 'rgba(var(--sf-rgb),.04)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
 }
 
-export function WorkspaceHeader({ view, name, subtitle, compactSearch }: { view: View; name: string; subtitle: string; compactSearch?: boolean }) {
+export function WorkspaceHeader({ view, name, subtitle, compactSearch, actions }: { view: View; name: string; subtitle: string; compactSearch?: boolean; actions?: React.ReactNode }) {
   const goHome = useAppStore((s) => s.goHome)
   const openPalette = useAppStore((s) => s.openPalette)
   const toggleFav = useAppStore((s) => s.toggleFav)
@@ -37,6 +37,7 @@ export function WorkspaceHeader({ view, name, subtitle, compactSearch }: { view:
       <button onClick={() => toggleFav(view)} title="Favorite workspace" style={{ ...boxBtn, color: isFav ? colOf(view) : 'rgba(var(--fg-rgb),.35)' }}>
         <svg width="17" height="17" viewBox="0 0 24 24" fill={isFav ? colOf(view) : 'none'} stroke="currentColor" strokeWidth="1.5"><path d="M12 3l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9 6.8 19.2l1-5.8L3.5 9.2l5.9-.9z" /></svg>
       </button>
+      {actions}
     </div>
   )
 }
